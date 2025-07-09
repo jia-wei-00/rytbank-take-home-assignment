@@ -1,1 +1,0 @@
-# rytbank-take-home-assignment
