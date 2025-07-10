@@ -25,6 +25,7 @@ const ScreenContainer = ({
   initialIndex = 0,
   tabScreens,
   tabBar,
+  space = "md",
   ...rest
 }: ScreenContainerProps) => {
   const layout = useWindowDimensions();
@@ -61,6 +62,7 @@ const ScreenContainer = ({
         "bg-background-0 p-2 pb-0 shadow-sm flex-1",
         className
       )}
+      space={space}
       {...rest}
     >
       {routes && renderScene && tabBar && (

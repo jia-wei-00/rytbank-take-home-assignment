@@ -1,36 +1,39 @@
 import React from "react";
 import { ScreenContainer } from "@/components";
-import { Text } from "@/components/ui/text";
-import { FlatList, RefreshControl } from "react-native";
 import dayjs from "dayjs";
 import { useFetchTransaction, useFetchUser } from "@/hooks";
-import { Heading } from "@/components/ui/heading";
+import { TopSection } from "@/components/home";
+import { TransactionSection } from "@/components/home";
+import { Text } from "@/components/ui/text";
 
 const Home = () => {
-  const { isPending, error, data, refetch, isRefetching } =
-    useFetchTransaction();
+  const { isPending, error, data, refetch, isRefetching } = useFetchTransaction(
+    dayjs().format("MMMM")
+  );
 
   const {
     isPending: isUserPending,
     error: userError,
     data: userData,
+    isRefetching: isUserRefetching,
+    refetch: userRefetch,
   } = useFetchUser();
 
   return (
     <ScreenContainer>
-      <Heading className="uppercase">{dayjs().format("MMMM")}</Heading>
-      {isPending && <Text>Loading...</Text>}
-      {error && <Text>Error: {error.message}</Text>}
-      <FlatList
+      <TopSection
+        userData={userData}
+        isLoading={isUserPending}
+        isUserRefetching={isUserRefetching}
+        error={userError}
+      />
+      <TransactionSection
+        error={error}
+        isPending={isPending}
         data={data}
-        renderItem={({ item }) => <Text>{item.description}</Text>}
-        keyExtractor={(item) => item.id.toString()}
-        refreshControl={
-          <RefreshControl
-            refreshing={isPending || isRefetching}
-            onRefresh={refetch}
-          />
-        }
+        isRefetching={isRefetching}
+        refetch={refetch}
+        userRefetch={userRefetch}
       />
     </ScreenContainer>
   );

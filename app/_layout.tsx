@@ -15,6 +15,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/components/useColorScheme";
 import { SafeAreaView, StatusBar } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -59,23 +60,28 @@ function RootLayoutNav() {
   const queryClient = new QueryClient();
 
   return (
-    <SafeAreaView className="flex-1 bg-background-0">
-      <StatusBar
-        backgroundColor={colorScheme === "dark" ? "#000000" : "#fff"}
-        barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
-      />
-      <QueryClientProvider client={queryClient}>
-        <GluestackUIProvider mode={colorScheme === "dark" ? "dark" : "light"}>
-          <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          >
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-            </Stack>
-          </ThemeProvider>
-        </GluestackUIProvider>
-      </QueryClientProvider>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <SafeAreaView className="flex-1 bg-background-0">
+        <StatusBar
+          backgroundColor={colorScheme === "dark" ? "#000000" : "#fff"}
+          barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
+        />
+        <QueryClientProvider client={queryClient}>
+          <GluestackUIProvider mode={colorScheme === "dark" ? "dark" : "light"}>
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="modal"
+                  options={{ presentation: "modal" }}
+                />
+              </Stack>
+            </ThemeProvider>
+          </GluestackUIProvider>
+        </QueryClientProvider>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
