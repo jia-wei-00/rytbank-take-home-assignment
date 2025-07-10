@@ -10,11 +10,9 @@ type TabScreen = {
   title: string;
 };
 
-interface ScreenContainerProps extends React.ComponentProps<typeof ScrollView> {
+interface ScreenContainerProps extends React.ComponentProps<typeof VStack> {
   children?: React.ReactNode;
   vStackClassName?: string;
-  stickyContentClassName?: string;
-  stickyContent?: React.ReactNode;
   initialIndex?: number;
   tabScreens?: TabScreen[];
   tabBar?: (props: SceneRendererProps) => React.ReactNode;
@@ -24,11 +22,8 @@ const ScreenContainer = ({
   children,
   vStackClassName,
   className,
-  stickyContent,
-  stickyContentClassName,
   initialIndex = 0,
   tabScreens,
-  refreshControl,
   tabBar,
   ...rest
 }: ScreenContainerProps) => {
@@ -60,56 +55,25 @@ const ScreenContainer = ({
       )
     );
 
-  const renderHeader = () => {
-    return (
-      <VStack
-        space="md"
-        className={twMerge(
-          stickyContentClassName,
-          "bg-background-0 py-4 shadow-sm"
-        )}
-      >
-        {stickyContent}
-      </VStack>
-    );
-  };
-
   return (
-    <>
-      {tabScreens ? (
-        <VStack
-          className={twMerge("bg-background-0 flex-1", className)}
-          {...rest}
-        >
-          {stickyContent && renderHeader()}
-          {routes && renderScene && tabBar && (
-            <TabView
-              navigationState={{ index, routes }}
-              renderScene={renderScene}
-              onIndexChange={setIndex}
-              initialLayout={{ width: layout.width }}
-              renderTabBar={tabBar}
-            />
-          )}
-        </VStack>
-      ) : (
-        <ScrollView
-          className={twMerge("bg-background-0 flex-1", className)}
-          stickyHeaderIndices={[0]}
-          scrollEventThrottle={16}
-          showsVerticalScrollIndicator={false}
-          {...rest}
-        >
-          {stickyContent && renderHeader()}
-          <VStack
-            space="md"
-            className={twMerge(vStackClassName, "bg-background-0 pb-4")}
-          >
-            {children}
-          </VStack>
-        </ScrollView>
+    <VStack
+      className={twMerge(
+        "bg-background-0 p-2 pb-0 shadow-sm flex-1",
+        className
       )}
-    </>
+      {...rest}
+    >
+      {routes && renderScene && tabBar && (
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: layout.width }}
+          renderTabBar={tabBar}
+        />
+      )}
+      {children}
+    </VStack>
   );
 };
 
