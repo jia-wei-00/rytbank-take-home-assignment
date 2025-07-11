@@ -6,6 +6,10 @@ import { HStack } from "@/components/ui/hstack";
 import { VStack } from "@/components/ui/vstack";
 import { User } from "@/hooks/useFetchUser";
 import { SkeletonText } from "@/components/ui/skeleton";
+import { useMaskText } from "@/hooks/useMaskText";
+import Entypo from "@expo/vector-icons/Entypo";
+import { useAuthStore } from "@/store";
+import { useLocalAuthentication } from "@/hooks";
 
 interface TopSectionProps {
   userData?: User;
@@ -20,9 +24,16 @@ const TopSection = ({
   isUserRefetching,
   error,
 }: TopSectionProps) => {
+  const isSensitiveDataAuthenticated = useAuthStore(
+    (state) => state.isSesitiveDataAuthenticated
+  );
+  const { authenticate } = useLocalAuthentication();
+
   const isLoading = React.useMemo(() => {
     return isLoadingUser || isUserRefetching;
   }, [isLoadingUser, isUserRefetching]);
+
+  const { mask } = useMaskText();
 
   if (error) {
     return <Text>Error: {error.message}</Text>;
@@ -52,20 +63,27 @@ const TopSection = ({
             {isLoading ? (
               <SkeletonText className="h-7 w-20" speed={4} />
             ) : (
-              userData?.accounts[0].accountNumber
+              mask(userData?.accounts[0].accountNumber)
             )}
           </Text>
         </VStack>
         <Divider orientation="vertical" className="h-10" />
         <VStack space="sm" className="flex-1 rounded-lg bg-background-50 p-2">
           <Text bold size="xl" className="text-center">
-            Balance
+            Balance{" "}
+            <Entypo
+              name={isSensitiveDataAuthenticated ? "eye" : "eye-with-line"}
+              onPress={() => authenticate("sensitive")}
+              size={16}
+            />
           </Text>
           <Text size="lg" className="text-center">
             {isLoading ? (
               <SkeletonText className="h-7 w-20" speed={4} />
             ) : (
-              `${userData?.accounts[0].currency} ${userData?.accounts[0].balance}`
+              `${userData?.accounts[0].currency} ${mask(
+                userData?.accounts[0].balance
+              )}`
             )}
           </Text>
         </VStack>

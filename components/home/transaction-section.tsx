@@ -7,6 +7,7 @@ import { Box } from "@/components/ui/box";
 import { HStack } from "@/components/ui/hstack";
 import { Transaction } from "@/hooks";
 import { SkeletonText } from "../ui/skeleton";
+import { useMaskText } from "@/hooks/useMaskText";
 
 interface TransactionSectionProps {
   error: Error | null;
@@ -25,6 +26,8 @@ const TransactionSection = ({
   refetch,
   userRefetch,
 }: TransactionSectionProps) => {
+  const { mask } = useMaskText();
+
   const isLoading = React.useMemo(() => {
     return isPending || isRefetching;
   }, [isPending, isRefetching]);
@@ -58,7 +61,7 @@ const TransactionSection = ({
             {isLoading ? (
               <SkeletonText className="h-7 w-20" speed={4} />
             ) : (
-              `RM${getTotalDebitCredit.debit.toFixed(2)}`
+              `RM${mask(getTotalDebitCredit.debit.toFixed(2))}`
             )}
           </Text>
         </Box>
@@ -70,7 +73,7 @@ const TransactionSection = ({
             {isLoading ? (
               <SkeletonText className="h-7 w-20" speed={4} />
             ) : (
-              `RM${getTotalDebitCredit.credit.toFixed(2)}`
+              `RM${mask(getTotalDebitCredit.credit.toFixed(2))}`
             )}
           </Text>
         </Box>

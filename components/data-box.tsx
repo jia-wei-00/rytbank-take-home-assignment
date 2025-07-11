@@ -4,12 +4,15 @@ import dayjs from "dayjs";
 import { VStack } from "@/components/ui/vstack";
 import { HStack } from "@/components/ui/hstack";
 import { Transaction } from "@/hooks/useFetchTransaction";
+import { useMaskText } from "@/hooks/useMaskText";
 
 interface DataBoxProps {
   item: Transaction;
 }
 
 const DataBox = ({ item }: DataBoxProps) => {
+  const { mask } = useMaskText();
+
   return (
     <VStack space="sm" className="p-2">
       <HStack space="sm" className="justify-between">
@@ -17,8 +20,9 @@ const DataBox = ({ item }: DataBoxProps) => {
           {item.description}
         </Text>
         <Text bold className="text-typography-900">
-          {item.type === "debit" ? "-" : "+"}
-          RM{item.amount}
+          {mask(
+            `${item.type === "debit" ? "-" : "+"} RM${item.amount.toFixed(2)}`
+          )}
         </Text>
       </HStack>
       <HStack space="sm" className="justify-between">
