@@ -58,7 +58,8 @@ export function useLocalAuthentication() {
   const authenticate = useCallback(
     async (type: "sensitive" | "normal" = "normal") => {
       if (type === "sensitive" && isSensitiveDataAuthenticated) {
-        return setIsSesitiveDataAuthenticated(false);
+        setIsSesitiveDataAuthenticated(false);
+        return false;
       }
 
       setIsAuthenticating(true);
@@ -71,15 +72,18 @@ export function useLocalAuthentication() {
         });
         if (!result.success) {
           setAuthError(result.error || "Authentication failed");
+          return false;
         } else {
           if (type === "sensitive") {
             setIsSesitiveDataAuthenticated(true);
           } else {
             setIsAuthenticated(true);
           }
+          return true;
         }
       } catch (e) {
         setAuthError(e instanceof Error ? e.message : "Authentication error");
+        return false;
       } finally {
         setIsAuthenticating(false);
       }

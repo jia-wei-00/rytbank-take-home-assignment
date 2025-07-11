@@ -1,35 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { Platform, StyleSheet } from 'react-native';
-
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+import { ScreenContainer } from "@/components";
+import { Text } from "@/components/ui/text";
+import React from "react";
+import { FlatList } from "react-native";
+import { HStack } from "@/components/ui/hstack";
+import { useLocalSearchParams } from "expo-router";
+import { Divider } from "@/components/ui/divider";
 
 export default function ModalScreen() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Modal</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/modal.tsx" />
+  const item = useLocalSearchParams();
 
-      {/* Use a light status bar on iOS to account for the black space above the modal */}
-      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-    </View>
+  const data = Object.entries(item).map(([key, value]) => ({
+    key,
+    value,
+  }));
+
+  return (
+    <ScreenContainer>
+      <FlatList
+        data={data}
+        renderItem={({ item }) => (
+          <HStack space="sm" className="justify-between p-5">
+            <Text bold className="text-typography-900 capitalize">
+              {item.key}
+            </Text>
+            <Text size="sm" className="text-typography-500">
+              {item.value}
+            </Text>
+          </HStack>
+        )}
+        keyExtractor={(item) => item.key}
+        ItemSeparatorComponent={() => <Divider className="my-2" />}
+      />
+    </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});
