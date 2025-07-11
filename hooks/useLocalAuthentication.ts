@@ -43,7 +43,12 @@ export function useLocalAuthentication() {
       try {
         const compatible = await LocalAuthentication.hasHardwareAsync();
         const enrolled = await LocalAuthentication.isEnrolledAsync();
-        setBiometricAvailable(compatible && enrolled);
+        const available = compatible && enrolled;
+        setBiometricAvailable(available);
+        if (!available) {
+          setIsAuthenticated(true);
+          setIsSesitiveDataAuthenticated(true);
+        }
       } catch (e) {
         setBiometricAvailable(false);
       }
@@ -86,6 +91,7 @@ export function useLocalAuthentication() {
 
   return {
     authenticateNeeded,
+    biometricAvailable,
     isAuthenticating,
     authError,
     authenticate,

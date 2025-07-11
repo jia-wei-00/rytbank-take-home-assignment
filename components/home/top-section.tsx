@@ -27,7 +27,7 @@ const TopSection = ({
   const isSensitiveDataAuthenticated = useAuthStore(
     (state) => state.isSesitiveDataAuthenticated
   );
-  const { authenticate } = useLocalAuthentication();
+  const { authenticate, biometricAvailable } = useLocalAuthentication();
 
   const isLoading = React.useMemo(() => {
     return isLoadingUser || isUserRefetching;
@@ -71,11 +71,13 @@ const TopSection = ({
         <VStack space="sm" className="flex-1 rounded-lg bg-background-50 p-2">
           <Text bold size="xl" className="text-center">
             Balance{" "}
-            <Entypo
-              name={isSensitiveDataAuthenticated ? "eye" : "eye-with-line"}
-              onPress={() => authenticate("sensitive")}
-              size={16}
-            />
+            {biometricAvailable && (
+              <Entypo
+                name={isSensitiveDataAuthenticated ? "eye" : "eye-with-line"}
+                onPress={() => authenticate("sensitive")}
+                size={16}
+              />
+            )}
           </Text>
           <Text size="lg" className="text-center">
             {isLoading ? (
