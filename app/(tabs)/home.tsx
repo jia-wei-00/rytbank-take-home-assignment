@@ -4,7 +4,6 @@ import dayjs from "dayjs";
 import { useFetchTransaction, useFetchUser } from "@/hooks";
 import { TopSection } from "@/components/home";
 import { TransactionSection } from "@/components/home";
-import { Text } from "@/components/ui/text";
 
 const Home = () => {
   const { isPending, error, data, refetch, isRefetching } = useFetchTransaction(
