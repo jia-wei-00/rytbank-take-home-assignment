@@ -8,16 +8,38 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { useLocalAuthentication } from "@/hooks";
 import { VStack } from "@/components/ui/vstack";
 import { useMaskText } from "@/hooks/useMaskText";
+import { Center } from "@/components/ui/center";
+import { Spinner } from "@/components/ui/spinner";
 
 interface HistoryChartProps {
+  isLoading: boolean;
   totalDebitCredit: { debit: number; credit: number };
+  isSensitiveDataAuthenticated: boolean;
+  biometricAvailable: boolean;
+  authenticate: (type?: "sensitive" | "normal") => void;
 }
 
-const HistoryChart = ({ totalDebitCredit }: HistoryChartProps) => {
-  const isSensitiveDataAuthenticated = useAuthStore(
-    (state) => state.isSesitiveDataAuthenticated
+const renderDot = (color: string) => {
+  return (
+    <View
+      style={{
+        height: 10,
+        width: 10,
+        borderRadius: 5,
+        backgroundColor: color,
+        marginRight: 10,
+      }}
+    />
   );
-  const { authenticate, biometricAvailable } = useLocalAuthentication();
+};
+
+const HistoryChart = ({
+  isLoading,
+  totalDebitCredit,
+  isSensitiveDataAuthenticated,
+  biometricAvailable,
+  authenticate,
+}: HistoryChartProps) => {
   const { mask } = useMaskText();
 
   const total = totalDebitCredit.debit + totalDebitCredit.credit;
@@ -50,20 +72,6 @@ const HistoryChart = ({ totalDebitCredit }: HistoryChartProps) => {
         },
       ];
 
-  const renderDot = (color: string) => {
-    return (
-      <View
-        style={{
-          height: 10,
-          width: 10,
-          borderRadius: 5,
-          backgroundColor: color,
-          marginRight: 10,
-        }}
-      />
-    );
-  };
-
   const renderLegendComponent = () => {
     return (
       <>
@@ -81,52 +89,68 @@ const HistoryChart = ({ totalDebitCredit }: HistoryChartProps) => {
     );
   };
 
+  if (!totalDebitCredit) {
+    return null;
+  }
+
   return (
-    <>
-      <View style={{ padding: 20, alignItems: "center" }}>
-        <PieChart
-          data={pieData}
-          donut
-          showGradient
-          sectionAutoFocus
-          radius={90}
-          innerRadius={60}
-          innerCircleColor={"#232B5D"}
-          centerLabelComponent={() => {
-            return (
-              <VStack className="items-center">
-                <Text>
-                  {biometricAvailable && (
-                    <Entypo
-                      name={
-                        isSensitiveDataAuthenticated ? "eye" : "eye-with-line"
-                      }
-                      onPress={() => authenticate("sensitive")}
-                      size={20}
-                    />
-                  )}
-                </Text>
-                <Text size="2xl" bold>
-                  {mask(
-                    `${
-                      debitPercentage > creditPercentage
-                        ? debitPercentage.toFixed(2)
-                        : creditPercentage.toFixed(2)
-                    }%`
-                  )}
-                </Text>
-                <Text>
-                  {mask(
-                    debitPercentage > creditPercentage ? "Debit" : "Credit"
-                  )}
-                </Text>
-              </VStack>
-            );
-          }}
-        />
-      </View>
-      {renderLegendComponent()}
-    </>
+    <Center>
+      <VStack className="h-[17rem]" space="md">
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            <Center>
+              <PieChart
+                data={pieData}
+                donut
+                showGradient
+                sectionAutoFocus
+                radius={90}
+                innerRadius={60}
+                innerCircleColor={"#232B5D"}
+                centerLabelComponent={() => {
+                  return (
+                    <VStack className="items-center">
+                      <Text>
+                        {biometricAvailable && (
+                          <Entypo
+                            name={
+                              isSensitiveDataAuthenticated
+                                ? "eye"
+                                : "eye-with-line"
+                            }
+                            onPress={() => authenticate("sensitive")}
+                            size={20}
+                          />
+                        )}
+                      </Text>
+                      <Text size="2xl" bold>
+                        {mask(
+                          `${
+                            debitPercentage > creditPercentage
+                              ? debitPercentage.toFixed(2)
+                              : creditPercentage.toFixed(2)
+                          }%`
+                        )}
+                      </Text>
+                      <Text>
+                        {mask(
+                          debitPercentage > creditPercentage
+                            ? "Debit"
+                            : "Credit"
+                        )}
+                      </Text>
+                    </VStack>
+                  );
+                }}
+              />
+            </Center>
+            {renderLegendComponent()}
+          </>
+        )}
+      </VStack>
+    </Center>
   );
 };
 
