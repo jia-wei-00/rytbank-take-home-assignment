@@ -8,8 +8,8 @@ import { HStack } from "@/components/ui/hstack";
 import { Transaction } from "@/hooks";
 import { SkeletonText } from "../ui/skeleton";
 import { useMaskText } from "@/hooks/useMaskText";
-import { View } from "react-native";
 import { VStack } from "../ui/vstack";
+import { getTotalDebitCredit as getTotalDebitCreditUtil } from "@/utils";
 
 interface TransactionSectionProps {
   error: Error | null;
@@ -40,22 +40,7 @@ const TransactionSection = ({
     if (totalDebitCredit) {
       return totalDebitCredit;
     }
-
-    if (!data || data.length === 0) {
-      return { debit: 0, credit: 0 };
-    }
-
-    return data.reduce(
-      (acc, item) => {
-        if (item.type === "debit") {
-          acc.debit += item.amount;
-        } else if (item.type === "credit") {
-          acc.credit += item.amount;
-        }
-        return acc;
-      },
-      { debit: 0, credit: 0 }
-    );
+    return getTotalDebitCreditUtil(data);
   }, [data]);
 
   return (
