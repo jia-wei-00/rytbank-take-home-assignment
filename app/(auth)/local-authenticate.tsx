@@ -6,7 +6,7 @@ import { Text } from "@/components/ui/text";
 import { Pressable } from "react-native";
 
 interface LocalAuthenticateProps {
-  authenticate: () => Promise<void>;
+  authenticate: (type: "sensitive" | "normal") => Promise<boolean>;
   isAuthenticating: boolean;
   authError: string | null;
 }
@@ -18,7 +18,7 @@ const LocalAuthenticate = ({
 }: LocalAuthenticateProps) => {
   return (
     <Center className="h-screen">
-      <Pressable onPress={authenticate}>
+      <Pressable onPress={() => authenticate("normal")}>
         <VStack space="lg">
           {isAuthenticating ? (
             <Text>Authenticating...</Text>

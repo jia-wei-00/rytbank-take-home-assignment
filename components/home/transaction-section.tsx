@@ -8,6 +8,8 @@ import { HStack } from "@/components/ui/hstack";
 import { Transaction } from "@/hooks";
 import { SkeletonText } from "../ui/skeleton";
 import { useMaskText } from "@/hooks/useMaskText";
+import { View } from "react-native";
+import { VStack } from "../ui/vstack";
 
 interface TransactionSectionProps {
   error: Error | null;
@@ -15,7 +17,7 @@ interface TransactionSectionProps {
   data: Transaction[] | undefined;
   isRefetching: boolean;
   refetch: () => void;
-  userRefetch: () => void;
+  userRefetch?: () => void;
 }
 
 const TransactionSection = ({
@@ -51,7 +53,7 @@ const TransactionSection = ({
   }, [data]);
 
   return (
-    <>
+    <VStack space="md" className="flex-1">
       <HStack space="sm">
         <Box className="bg-background-50 rounded-lg shadow-sm p-2 flex-1">
           <Text bold size="lg" className="text-center">
@@ -79,7 +81,7 @@ const TransactionSection = ({
         </Box>
       </HStack>
       {error && <Text>Error: {error.message}</Text>}
-      <Box className="bg-background-50 rounded-lg shadow-sm p-2">
+      <Box className="bg-background-50 rounded-lg shadow-sm p-2 flex-1 mb-2">
         {isPending && <Text>Loading...</Text>}
         <FlatList
           data={data}
@@ -90,14 +92,14 @@ const TransactionSection = ({
               refreshing={isPending || isRefetching}
               onRefresh={() => {
                 refetch();
-                userRefetch();
+                userRefetch?.();
               }}
             />
           }
           ItemSeparatorComponent={() => <Divider className="my-2" />}
         />
       </Box>
-    </>
+    </VStack>
   );
 };
 
