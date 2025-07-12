@@ -1,24 +1,54 @@
 import React from "react";
-import { View, Text } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
-import { Transaction } from "@/hooks";
+import { View } from "react-native";
+import { Text } from "@/components/ui/text";
+import { HStack } from "@/components/ui/hstack";
+import { useAuthStore } from "@/store";
+import Entypo from "@expo/vector-icons/Entypo";
+import { useLocalAuthentication } from "@/hooks";
+import { VStack } from "@/components/ui/vstack";
+import { useMaskText } from "@/hooks/useMaskText";
 
 interface HistoryChartProps {
-  data: Transaction[] | undefined;
+  totalDebitCredit: { debit: number; credit: number };
 }
 
-const HistoryChart = ({ data }: HistoryChartProps) => {
-  const pieData = [
-    {
-      value: 47,
-      color: "#009FFF",
-      gradientCenterColor: "#006DFF",
-      focused: true,
-    },
-    { value: 40, color: "#93FCF8", gradientCenterColor: "#3BE9DE" },
-    { value: 16, color: "#BDB2FA", gradientCenterColor: "#8F80F3" },
-    { value: 3, color: "#FFA5BA", gradientCenterColor: "#FF7F97" },
-  ];
+const HistoryChart = ({ totalDebitCredit }: HistoryChartProps) => {
+  const isSensitiveDataAuthenticated = useAuthStore(
+    (state) => state.isSesitiveDataAuthenticated
+  );
+  const { authenticate, biometricAvailable } = useLocalAuthentication();
+  const { mask } = useMaskText();
+
+  const total = totalDebitCredit.debit + totalDebitCredit.credit;
+  const debitPercentage = (totalDebitCredit.debit / total) * 100;
+  const creditPercentage = (totalDebitCredit.credit / total) * 100;
+
+  const debitColor = "#FF3B30";
+  const creditColor = "#34C759";
+
+  const pieData = isSensitiveDataAuthenticated
+    ? [
+        {
+          value: creditPercentage,
+          color: creditColor,
+          gradientCenterColor: creditColor,
+          focused: creditPercentage > debitPercentage,
+        },
+        {
+          value: debitPercentage,
+          color: debitColor,
+          gradientCenterColor: debitColor,
+          focused: debitPercentage > creditPercentage,
+        },
+      ]
+    : [
+        {
+          value: 100,
+          color: "#232B5D",
+          gradientCenterColor: "#232B5D",
+        },
+      ];
 
   const renderDot = (color: string) => {
     return (
@@ -37,50 +67,16 @@ const HistoryChart = ({ data }: HistoryChartProps) => {
   const renderLegendComponent = () => {
     return (
       <>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginBottom: 10,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              width: 120,
-              marginRight: 20,
-            }}
-          >
-            {renderDot("#006DFF")}
-            <Text style={{ color: "white" }}>Excellent: 47%</Text>
-          </View>
-          <View
-            style={{ flexDirection: "row", alignItems: "center", width: 120 }}
-          >
-            {renderDot("#8F80F3")}
-            <Text style={{ color: "white" }}>Okay: 16%</Text>
-          </View>
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              width: 120,
-              marginRight: 20,
-            }}
-          >
-            {renderDot("#3BE9DE")}
-            <Text style={{ color: "white" }}>Good: 40%</Text>
-          </View>
-          <View
-            style={{ flexDirection: "row", alignItems: "center", width: 120 }}
-          >
-            {renderDot("#FF7F97")}
-            <Text style={{ color: "white" }}>Poor: 3%</Text>
-          </View>
-        </View>
+        <HStack className="justify-center" space="4xl">
+          <HStack className="items-center">
+            {renderDot(debitColor)}
+            <Text>Debit</Text>
+          </HStack>
+          <HStack className="items-center">
+            {renderDot(creditColor)}
+            <Text>Credit</Text>
+          </HStack>
+        </HStack>
       </>
     );
   };
@@ -98,14 +94,33 @@ const HistoryChart = ({ data }: HistoryChartProps) => {
           innerCircleColor={"#232B5D"}
           centerLabelComponent={() => {
             return (
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <Text
-                  style={{ fontSize: 22, color: "white", fontWeight: "bold" }}
-                >
-                  47%
+              <VStack className="items-center">
+                <Text>
+                  {biometricAvailable && (
+                    <Entypo
+                      name={
+                        isSensitiveDataAuthenticated ? "eye" : "eye-with-line"
+                      }
+                      onPress={() => authenticate("sensitive")}
+                      size={20}
+                    />
+                  )}
                 </Text>
-                <Text style={{ fontSize: 14, color: "white" }}>Excellent</Text>
-              </View>
+                <Text size="2xl" bold>
+                  {mask(
+                    `${
+                      debitPercentage > creditPercentage
+                        ? debitPercentage.toFixed(2)
+                        : creditPercentage.toFixed(2)
+                    }%`
+                  )}
+                </Text>
+                <Text>
+                  {mask(
+                    debitPercentage > creditPercentage ? "Debit" : "Credit"
+                  )}
+                </Text>
+              </VStack>
             );
           }}
         />
