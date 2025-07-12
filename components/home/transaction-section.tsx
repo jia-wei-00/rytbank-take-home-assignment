@@ -18,6 +18,7 @@ interface TransactionSectionProps {
   isRefetching: boolean;
   refetch: () => void;
   userRefetch?: () => void;
+  totalDebitCredit?: { debit: number; credit: number };
 }
 
 const TransactionSection = ({
@@ -27,6 +28,7 @@ const TransactionSection = ({
   isRefetching,
   refetch,
   userRefetch,
+  totalDebitCredit,
 }: TransactionSectionProps) => {
   const { mask } = useMaskText();
 
@@ -35,6 +37,10 @@ const TransactionSection = ({
   }, [isPending, isRefetching]);
 
   const getTotalDebitCredit = React.useMemo(() => {
+    if (totalDebitCredit) {
+      return totalDebitCredit;
+    }
+
     if (!data || data.length === 0) {
       return { debit: 0, credit: 0 };
     }

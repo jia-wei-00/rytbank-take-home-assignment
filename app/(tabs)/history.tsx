@@ -17,12 +17,30 @@ const History = () => {
     dayjs(date).format("MMMM")
   );
 
+  const totalDebitCredit = React.useMemo(() => {
+    if (!data || data.length === 0) {
+      return { debit: 0, credit: 0 };
+    }
+
+    return data.reduce(
+      (acc, item) => {
+        if (item.type === "debit") {
+          acc.debit += item.amount;
+        } else if (item.type === "credit") {
+          acc.credit += item.amount;
+        }
+        return acc;
+      },
+      { debit: 0, credit: 0 }
+    );
+  }, [data]);
+
   return (
     <ScreenContainer>
       <Text className="text-right p-2">
         <Entypo name="calendar" onPress={() => setVisible(true)} size={24} />
       </Text>
-      <HistoryChart data={data} />
+      <HistoryChart totalDebitCredit={totalDebitCredit} />
       <TransactionSection
         error={error}
         isPending={isPending}

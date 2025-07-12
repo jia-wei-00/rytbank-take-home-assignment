@@ -55,7 +55,9 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+  // const colorScheme = useColorScheme();
+  // Set colorScheme to "dark" manually temporarily since light mode is not supported currently
+  const colorScheme = "dark";
 
   const queryClient = new QueryClient();
 
