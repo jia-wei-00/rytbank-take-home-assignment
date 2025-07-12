@@ -1,6 +1,6 @@
 # Secure Transaction History Module - Take-Home Assignment
 
-A React Native fintech application built with Expo and TypeScript that provides secure transaction history management with biometric authentication.
+A React Native application built with Expo and TypeScript that provides secure transaction history management with biometric authentication.
 
 ## 📋 Project Overview
 
