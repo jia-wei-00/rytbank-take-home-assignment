@@ -210,7 +210,7 @@ The application fetches data from hosted API endpoints:
 1. **Clone the repository**
 
 ```bash
-git clone [repository-url]
+git clone [[repository-url]](https://github.com/jia-wei-00/rytbank-take-home-assignment.git)
 cd rytbank-take-home-assignment
 ```
 
