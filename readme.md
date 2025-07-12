@@ -6,10 +6,9 @@ A React Native application built with Expo and TypeScript that provides secure t
 
 This application was developed as a take-home assignment. The project demonstrates the implementation of a secure transaction history module with the following core capabilities:
 
-- **Secure Authentication**: Device biometric authentication (FaceID/Fingerprint)
+- **Secure Authentication**: Device biometric authentication (Fingerprint)
 - **Transaction Management**: View, filter, and manage financial transactions
 - **Data Security**: Sensitive information masking with biometric unlock
-- **Modern UI**: Responsive design with light/dark mode support
 - **Error Handling**: Comprehensive error handling throughout the application
 
 ## 🚀 Features
@@ -28,19 +27,13 @@ This application was developed as a take-home assignment. The project demonstrat
 - **Transaction Detail Screen**: Modal-based detailed transaction views
 - **Amount Masking**: Comprehensive sensitive data protection with biometric reveal
 - **Pull-to-Refresh**: Transaction list refresh functionality
-- **Date Filtering**: Month-based transaction filtering with calendar picker
+- **Date Filtering**: Month-based transaction filtering with month picker
 - **Interactive Charts**: Pie charts showing debit/credit breakdown with data visualization
 - **State Management**: Zustand store for authentication and app state
 - **Session Management**: Automatic re-authentication when app returns to foreground
 - **Biometric Toggle**: Eye icon toggles for revealing/hiding sensitive data
 - **Loading States**: Skeleton loaders for better user experience
 - **Secure Navigation**: Biometric authentication required for sensitive screens
-
-### 🔄 In Progress Features
-
-- **Advanced Search**: Text-based search across transaction descriptions
-- **Category Filtering**: Filter transactions by specific categories
-- **Notification System**: Push notifications for new transactions
 
 ## 🏗️ Architecture
 
